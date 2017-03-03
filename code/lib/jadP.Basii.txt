@@ -1,0 +1,59 @@
+jadPBasii.py
+jad0 :- 
+[[ jad1 ]] "file name?" ask "infile" !
+           initPword jadP .
+;
+jadP :-
+[[ jadP1 ]] pword "tableN" ! dbBraceCheck "e" @ "ok" = 
+            keyset tagset
+           pword ")" = actionSave
+           pword ";" tail.
+.
+[[ jad2 ]] "error occurred on (( check " msg .
+;
+
+dbBraceCheck :-
+[[ dbc1  ]]  pword "((" = "ok" "e" ! .
+[[ dbc2 ]] "nok" "e" ! .
+;
+
+
+keyset :- /* name {of ''' [} */  
+[[ 1 ]] "kix" "0" ! 
+        keyset1 .
+;
+keyset1 :-
+[[ 1 ]] pword // kn*kix // keyset2 ...
+[[ 2 ]] kt1 @ 1 = kix++ tail . 
+[[ 3 ]] kt1 @ 2 = .
+;
+
+keyset2 :- 
+[[ 1 ]] pword ...
+[[ 1.1 ]] dup "of" = drop // pfk tail .
+[[ 2 ]] dup "[" = drop // keyVals tail .
+[[ 3 ]] dup "'''" = drop // keyDesc tail.
+[[ 4 ]] dup "," = drop kt1 1 ! .
+[[ 5 ]] dup ")" = drop kt1 2 ! .
+[[ 6 ]] "unexpected marker near " swap cat msg fail .
+;
+tagset :- /* name {of ''' [} */  
+[[ 1 ]] tix 0 ! 
+        // tagset1 .
+;
+tagset1 :-
+[[ 1 ]] pword // tn*tix // tagset2 ...
+[[ 2 ]] tgt1 @ 1 = tix++ tail . 
+[[ 3 ]] tgt1 @ 2 = .
+;
+
+tagset2 :- 
+[[ 1 ]] pword ...
+[[ 1.1 ]] dup "of" = drop // tgfk tail .
+[[ 2 ]] dup "[" = drop // tagVals tail .
+[[ 3 ]] dup "'''" = drop // tagDesc tail.
+[[ 4 ]] dup "," = drop tgt1 1 ! .
+[[ 5 ]] dup ")" = drop tgt1 2 ! .
+[[ 6 ]] "unexpected marker near " swap cat msg fail .
+;
+@endend
