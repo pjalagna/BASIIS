@@ -2,6 +2,7 @@
 # fioi , fioo , get/set iox, flookup , fwhite, ftill,  fctill, ftillor
 # == tested
 # fpword, fpback
+# pja 3-04-2017 tested fpword
 # pja 9-24-12 edits to stop till, tillor, ctill on eof
 # ------------ edits to clip targetCH to targetCH[0]
 # pja 10-17-2012 changed print to #rint

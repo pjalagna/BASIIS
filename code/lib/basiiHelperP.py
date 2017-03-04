@@ -1,7 +1,12 @@
 #file basiiHelperP.py
-"""history
+"""
+NEEDS - rework paragraph to process 
+... , tail. and "fail."
+
+history
 pja 03-02-2017 cloned from basiiHelper
 -------------- added pword pickup instead of getline
+-------------- clause name is concatenated to pragraph name (IE pgn_cn) 
 ===================================
 helper writes basii sections that are collected into a final basii file
 file format is Basii token + output filename
@@ -12,9 +17,9 @@ pgf :-
 or @endend
 ===================================
 test as
-filename = 't1.txt'
+filename = 'jadP.Basii.txt'
 import basiiHelperP
-basiiHelperP.main(filename)
+basiiHelperP.main(filename,'on')
 import t1
 t1.main('on')
 # setting trace
@@ -31,15 +36,27 @@ basiis helper ops guide
           """
     print(out)
 #end help
+
+import time
+ts = time
+def logg(msg):
+    global ts
+    j = raw_input("logg (" + ts.asctime() + ")[" + msg + ']')
+#end logg
+
 def pword():
     global fi,nds
     j = fi.fpword()
+    nds['c'] = j # save 
     if (nds['trace'] == 'on'):
         logg ('pword =(' + j.__str__() + ")")
     #endif
-    return(j)
+    return(j[1])
 #end pword
-def main(filename):
+def main(filename,trace='off'):
+    global nds
+    nds = {}
+    nds['trace'] = trace
     import fioiClass
     global fi
     fi = fioiClass.fio(filename)
@@ -51,16 +68,18 @@ def main(filename):
     ffo = open(sec['outfile'],'w')
     ffo.write(sec['hx0']) #file header
     sec['mx3'] = ''
-    paragraph(fh,ffo)
+    paragraph(ffo)
     ffo.write(sec['hx2'] + sec['mx3'] + sec['hx4'])
     ffo.write(sec['hx1'])
     ffo.close()
-    fh.close()
 #end main
-def paragraph(fh,ffo):
+def paragraph(ffo):
+    logg('begin paragraph')
     global sec
+    logg('sec[] =((' + sec.__str__() + "))" )
     pp = 0
     while (pp == 0):
+        logg('loop paragraph')
         pgn = pword()
         if (pgn.upper() == '@ENDEND'):
             pp = -1 #break
@@ -70,25 +89,32 @@ def paragraph(fh,ffo):
             # gen pgf header
             sec['pgx1'] = sec['hxp1'] .replace('%pgn%', pgn)
             sec['pgx3'] = sec['hxp3'] .replace('%pgn%', pgn)
+            # get :-
+            nop = pword()
             # call clauses
             sec['pgx2'] = ''
-            clauses(fh,ffo)
+            clauses(pgn,ffo)
             # write paragraph output
             ffo.write( sec['pgx1'] + sec['pgx2'] + sec['pgx3'])
-            print('pgf...' + pgn )
+            logg('code out = ((' +  sec['pgx1'] + sec['pgx2'] + sec['pgx3'] + "))")
+            logg('pgf...' + pgn )
         #endif
     #wend
 #end pgf
         
-def clauses(fh,ffo):
+def clauses(pgn,ffo):
     global sec
+    logg('begin clause')
     d = 0
     while (d == 0):
         op = pword()
         if (op == ';'):
+            logg('got ; in clauses')
             d = -1 # break
         else:
             cn = pword()
+            cn = pgn + "_" + cn
+            logg('cn is ((' + cn + "))")
             bop = pword()
             sec['cl2'] = ''
             # add your call to paragraph
@@ -96,21 +122,26 @@ def clauses(fh,ffo):
             # gen head and tail
             sec['cl1'] = sec['hc1'].replace('%cln%',cn)
             sec['cl3'] = sec['hc3'].replace('%cln%',cn)
-            verbs(fh)
+            verbs()
             # write clause output
             ffo.write(sec['cl1'] + sec['cl2'] + sec['cl3'])
+            logg('clause out =((' + sec['cl1'] + sec['cl2'] + sec['cl3'] + "))" )
         #endif
     #wend
 #end clauses
-def verbs(fh):
+def verbs():
+    logg('begin verbs')
     vv = 0
     while (vv == 0):
         vn = pword()
+        logg('verb is ((' + vn + "))")
         if (vn == "."):
+            logg('got period')
             nop = "<removed code see notes =a=>"
             vv = -1 #break
         else:
-            if (vn[0] == '"'):
+            if (nds['c'][3] == 'Q'):
+                logg('got lit ((' + vn + "))" )
                 sec['cl2'] = sec['cl2'] + """
     r = p['sy']['pop']()
     if (r == p['OK']):
@@ -127,6 +158,7 @@ def verbs(fh):
     #endif
     """
             else:
+                logg('verb is called')
                 sec['cl2'] = sec['cl2'] + """
     r = p['sy']['pop']()
     if (r == p['OK']):
@@ -148,14 +180,6 @@ def verbs(fh):
     #wend
 #end verbs
             
-    
-        
-def pword():
-    m = fh.readline()
-    m = m[0:-1]
-    return(m)
-#end getline
-
 def prepSec():
     global sec
     sec['sy'] = {}

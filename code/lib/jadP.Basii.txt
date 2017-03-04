@@ -3,6 +3,10 @@ jad0 :-
 [[ jad1 ]] "file name?" ask "infile" !
            initPword jadP .
 ;
+initPword :-
+[[ 1 ]] code: -- endcode: .
+;
+
 jadP :-
 [[ jadP1 ]] pword "tableN" ! dbBraceCheck "e" @ "ok" = 
             keyset tagset
