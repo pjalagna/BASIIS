@@ -2,6 +2,8 @@
 """
 NEEDS - rework paragraph to process 
 ... , tail. and "fail."
+-- redo paragraph section to write umberlella code
+
 
 history
 pja 03-02-2017 cloned from basiiHelper
@@ -41,7 +43,11 @@ import time
 ts = time
 def logg(msg):
     global ts
-    j = raw_input("logg (" + ts.asctime() + ")[" + msg + ']')
+    if (nds['trace'] == 'on'):
+        j = raw_input("logg (" + ts.asctime() + ")[" + msg + ']')
+    else:
+        print("Plogg (" + ts.asctime() + ")[" + msg + ']')
+    #endif
 #end logg
 
 def pword():
@@ -57,6 +63,7 @@ def main(filename,trace='off'):
     global nds
     nds = {}
     nds['trace'] = trace
+    logg('trace = ((' + trace + "))")
     import fioiClass
     global fi
     fi = fioiClass.fio(filename)
@@ -87,8 +94,8 @@ def paragraph(ffo):
             # add your name to the symbol table
             sec['mx3'] = sec['mx3'] + sec['hx3'].replace('%pn%',pgn)
             # gen pgf header
-            sec['pgx1'] = sec['hxp1'] .replace('%pgn%', pgn)
-            sec['pgx3'] = sec['hxp3'] .replace('%pgn%', pgn)
+            sec['pgx1'] = sec['hxp1'] .replace('%pgfn%', pgn)
+            sec['pgx3'] = sec['hxp3'] .replace('%pgfn%', pgn)
             # get :-
             nop = pword()
             # call clauses
@@ -105,6 +112,7 @@ def paragraph(ffo):
 def clauses(pgn,ffo):
     global sec
     logg('begin clause')
+    line = 0
     d = 0
     while (d == 0):
         op = pword()
@@ -118,7 +126,11 @@ def clauses(pgn,ffo):
             bop = pword()
             sec['cl2'] = ''
             # add your call to paragraph
-            sec['pgx2'] =sec['pgx2'] + sec['hxp2'].replace('%cln%',cn)
+            line = line + 1
+            mm = sec['hxp2'].replace('%cln%',cn)
+            mm2 = mm.replace('%line%',line.__str__())
+            
+            sec['pgx2'] =sec['pgx2'] + mm2
             # gen head and tail
             sec['cl1'] = sec['hc1'].replace('%cln%',cn)
             sec['cl3'] = sec['hc3'].replace('%cln%',cn)
@@ -148,7 +160,7 @@ def verbs():
         if (p['v']['trace'] == 'on'):
             nop = raw_input('push """ + vn + """')
         #endif
-        datPush(""" + vn + """)
+        datPush('""" + vn + """')
         if (p['v']['trace'] == 'on'):
             nop = raw_input('after """ + vn + """')
         #endif
@@ -189,6 +201,26 @@ def prepSec():
 
     sec['hx1'] = """
 # helper rtns 
+
+def doJ(line):
+    global p
+    J = datPop()
+    if (j ==p['OK']):
+        datPush( p['OK'])
+        line = -1 #break
+    elif (j==p['NOK']):
+        line = line +1
+    elif (j=='TAIL'):
+        line=0
+    elif (j=='FAIL'):
+        datPush(p['NOK']) # nok 
+        line =-2 #break
+    else:
+        raw_input('error bad format verbs - returned ((' + j.__str__() + "))" )
+        line = -3 # break
+    #endif
+    return(line)
+#end doJ
 def datPush(val):
     global p
     p['dat'].append(val)
@@ -216,6 +248,10 @@ def dump():
     global p
     return(p)
 #end dump
+def load(pin):
+    global p
+    p = pin
+#end load
 
 def help():
     out = " usage \\n"
@@ -252,51 +288,52 @@ def main(startpoint,trace='off'):
     #
 """
     sec['hx4'] = """
-        p['sy']['start'] = p['sy'][startpoint] 
+    p['sy']['start'] = p['sy'][startpoint] 
 #end main
 def start(trace='off'):
-    p['sy']['start'](trace) # process begins at start
+    global p
+    p['sy']['start'](p) # process begins at start
 #end start
 """
     sec['hxp1'] = """
-def %pgn% (x):
-    global p
-    if (p['v']['trace'] == 'on'):
-        nop = raw_input('%pgn%')
-        #print('dat',p['dat'])
-    #endif
-    datPush(p['NOK'])
+def %pgfn%(p):
+    line=0
+    while (0<=line):
+        if (p['v']['trace'] == 'on'):
+            nop = raw_input('line is ((' + line.__str__() + "))")
+        #endif
+        if(line==0):
+            line = 1
 """
     sec['hxp2'] = """
-    # 
-    r = p['sy']['pop']()
-    if(r == p['NOK']):
-        if (p['v']['trace'] == 'on'):
-            nop = raw_input('call %cln%')
-        #endif
-        %cln%()
-        if (p['v']['trace'] == 'on'):
-            nop = raw_input('after call %cln%')
-        #endif
-    #endif
-    #
+        elif (line==%line%):
+            #Trace and call %cln%
+            if (p['v']['trace'] == 'on'):
+                nop = raw_input('call %cln%')
+            #endif
+            %cln%()
+            if (p['v']['trace'] == 'on'):
+                nop = raw_input('after call %cln%')
+            #endif
+            line =doJ(line)
 """
     sec['hxp3'] = """
-    #final
-    if (p['v']['trace'] == 'on'):
-        nop = raw_input('final %pgn%')    
-    r =  p['sy']['pop']()
-    if (r == p['NOK']):
-        datPush(p['NOK'])
-    else:
-        datPush(p['OK'])
-    #endif
-#end %pgn%
+        #final
+        else:
+            if (0<=line):
+                datPush(p['OK'])
+            else:
+                datPush(p['NOK']) # nok
+            #endif
+            line = -3 #break
+        #endif
+    #wend
+#end paragraph %pgfn%
+
 """
     sec['hc1'] = """
 def %cln%():
     global p
-    
     if (p['v']['trace'] == 'on'):
         nop = raw_input('%cln%')
         #print('dat',p['dat'])
@@ -328,7 +365,7 @@ def %cln%():
     else:
         datPush(p['OK'])
     #endif
-#end %cln%
+#end clause %cln%
 """
 #end prepSec
     

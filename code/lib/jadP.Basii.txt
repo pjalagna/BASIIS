@@ -1,10 +1,43 @@
 jadPBasii.py
+/*
+history
+pja 03-12-2017 added to language "Load" function
+pja 02-12-2017 orig
+
+language format
+jadP [ init THEN [ tableStuff OR LoadStuff ] till @end2
+- tableStuff [ "Table" <tableName> "((" keyStuff ")" tagStuff ")" ";"
+-- keyStuff [ <keyName> keyOptions ","+ ] till ")"
+--- keyOptions [ "~" <Litteral> "~" OR
+                 "of" <tableName>.<columnName> # IE fk OR
+                 "[" valueSet "]"
+                ]
+---- valueSet [ "~" litteral "~"  OR
+                "ValueOf" <tableName>.<ColumnName> from <columnName> "=" "~" <litteral> "~" 
+              ]
+                ,+ till non~/ValueOf 
+
+- loadStuff [ "Load" <tableName> "[" cvSet "]" ";" ]
+-- cvSet [ "[[" cvOptions "]]" ]
+--- cvOptions [ <columnName> "=" "~" <litteral> "~" ] ,+ till "]]"
+
+*/
+
 jad0 :- 
-[[ jad1 ]] "file name?" ask "infile" !
-           initPword jadP .
+[[ 1 ]] "file name?" ask "infile" !
+           init jadP .
 ;
+init :-
+[[ 1 ]] initPword .
+;
+
 initPword :-
-[[ 1 ]] code: -- endcode: .
+/* how does this work? 
+import EP<name>
+set symbolTable via [ object = EP<name>.setSymbols(object)]
+"code:" is syntactic sugar
+*/
+[[ 1 ]] code: "EPInitPword" endcode: .
 ;
 
 jadP :-
@@ -22,7 +55,7 @@ dbBraceCheck :-
 ;
 
 
-keyset :- /* name {of ''' [} */  
+keyset :- /* name {of ~ [} */  
 [[ 1 ]] "kix" "0" ! 
         keyset1 .
 ;
@@ -36,12 +69,12 @@ keyset2 :-
 [[ 1 ]] pword ...
 [[ 1.1 ]] dup "of" = drop // pfk tail .
 [[ 2 ]] dup "[" = drop // keyVals tail .
-[[ 3 ]] dup "'''" = drop // keyDesc tail.
+[[ 3 ]] dup "~" = drop // keyDesc tail.
 [[ 4 ]] dup "," = drop kt1 1 ! .
 [[ 5 ]] dup ")" = drop kt1 2 ! .
 [[ 6 ]] "unexpected marker near " swap cat msg fail .
 ;
-tagset :- /* name {of ''' [} */  
+tagset :- /* name {of ~ [} */  
 [[ 1 ]] tix 0 ! 
         // tagset1 .
 ;
@@ -55,7 +88,7 @@ tagset2 :-
 [[ 1 ]] pword ...
 [[ 1.1 ]] dup "of" = drop // tgfk tail .
 [[ 2 ]] dup "[" = drop // tagVals tail .
-[[ 3 ]] dup "'''" = drop // tagDesc tail.
+[[ 3 ]] dup "~" = drop // tagDesc tail.
 [[ 4 ]] dup "," = drop tgt1 1 ! .
 [[ 5 ]] dup ")" = drop tgt1 2 ! .
 [[ 6 ]] "unexpected marker near " swap cat msg fail .
