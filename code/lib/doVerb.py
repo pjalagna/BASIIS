@@ -5,8 +5,24 @@ def init(p):
     p['sy']['='] = eq
     p['sy']['!'] = bang
     p['sy']['@'] = att
+    p['sy']['endcode:'] = endcode
+    p['sy']['code:'] = code
     return(p)
 #end init
+def code(p):
+    """ syntatic sugar """
+    p['sy']['push'](p['OK'])
+#end code
+def endcode(p):
+    """ NEEDS WORK """
+    """ add to symbol table """
+    if (p['v']['trace'] == 'on'):
+        print('endcode:')
+    #endif
+    m = p['sy']['pop']()  #program name
+    # import file <name>P.py
+    # do p = init<name>(p)
+    # push ok
 def msg(p):
     if (p['v']['trace'] == 'on'):
         print('msg')

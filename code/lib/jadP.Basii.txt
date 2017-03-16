@@ -28,7 +28,9 @@ jad0 :-
            init jadP .
 ;
 init :-
-[[ 1 ]] initPword .
+[[ 1 ]] initPword 
+initAskP
+.
 ;
 
 initPword :-
@@ -41,6 +43,16 @@ set symbolTable via [ object = EP<name>.setSymbols(object)]
 ;
 
 jadP :-
+/* jadP [ tableStuff OR LoadStuff ] till @end2 */
+[[ 0 ]] pword ... .
+[[ 00 ]] dup "/*" = drop doComment Tail. .
+[[ 1 ]] dup "TABLE" = drop tableStuff tail. .
+[[ 2 ]] dup "LOAD" = drop loadStuff tail. .
+[[ 3 ]] dup "SCREEN" = drop screenStuff tail. .
+[[ er ]] " received in error at jadP " cat msg fail. .
+;
+
+
 [[ jadP1 ]] pword "tableN" ! dbBraceCheck "e" @ "ok" = 
             keyset tagset
            pword ")" = actionSave

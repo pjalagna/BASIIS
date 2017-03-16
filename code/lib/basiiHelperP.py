@@ -1,11 +1,8 @@
 #file basiiHelperP.py
 """
-NEEDS - rework paragraph to process 
-... , tail. and "fail."
--- redo paragraph section to write umberlella code
-
-
 history
+pja 03-15-2017 added umbrella code (doJ) for paragraph processing
+--------------- of "..." tail. and fail.
 pja 03-02-2017 cloned from basiiHelper
 -------------- added pword pickup instead of getline
 -------------- clause name is concatenated to pragraph name (IE pgn_cn) 
@@ -238,12 +235,6 @@ def datPop():
     return(v)
 #end datPop
 
-def prepSy():
-    global p
-    import doVerb
-    p = doVerb.init(p) # load vectors
-#end prepSy
-
 def dump():
     global p
     return(p)
@@ -270,17 +261,9 @@ def help():
 def main(startpoint,trace='off'):
     global p
     p = {}
-    p['dat'] = [] # data stack
-    p['r'] = [] # r stack
-    p['v'] = {} # nds
-    p['l'] = {} # lib table
-    p['sy'] = {} # symbol table
-    p['sy']['pop'] = datPop
-    p['sy']['push'] = datPush
-    p['v']['trace'] = trace
-    prepSy()
-    p['OK'] = 'pOK'
-    p['NOK'] = 'pNOK'
+    import verbs
+    p = verbs.init(p)
+    
 """
     sec['hx3'] = """
     # 
