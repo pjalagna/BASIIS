@@ -1,7 +1,7 @@
 # file forthP.py
 """ inserts all stack verbs into symbol table and class table
 dup drop swap roll
-cat cats 
+cat cats replace
 pja 3-15-2017 orig
 
 test as
