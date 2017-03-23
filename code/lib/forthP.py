@@ -20,7 +20,9 @@ def init(p):
     p['sy']['swap'] = swap
     ## p['sy']['slice'] = slice # "str" ==> f,m,l
     ## p['sy']['pslice'] = pslice # num ==> f,m,l
-    ## p['sy']['roll'] = roll
+    p['sy']['roll'] = roll
+    p['sy']['cats'] = cats
+    p['sy']['replace'] = replace
     return(p)
 #end init
 def dup(p):
@@ -51,7 +53,7 @@ def cat(p):
 #end cat
 def cats(p):
     if (p['v']['trace'] == 'on'):
-        print('cat begin')
+        print('cats begin')
     #end if
     op1 = p['sy']['pop']()
     op2 = p['sy']['pop']()
@@ -59,7 +61,18 @@ def cats(p):
     p['sy']['push'](opc) 
     p['sy']['push'](p['OK'])
 #end cats
-
+def replace(p):
+    if (p['v']['trace'] == 'on'):
+        print('replace begin')
+    #end if
+    op1 = p['sy']['pop']() # new replacement
+    op2 = p['sy']['pop']() # replacement token (needle)
+    op3 = p['sy']['pop']() # haystack
+    op3.replace(op2,op1)
+    p['sy']['push'](op3) 
+    p['sy']['push'](p['OK'])
+#end replace
+    
 def swap(p):
     if (p['v']['trace'] == 'on'):
         print('swap begin')
