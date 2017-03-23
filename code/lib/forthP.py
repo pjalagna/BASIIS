@@ -1,5 +1,7 @@
 # file forthP.py
 """ inserts all stack verbs into symbol table and class table
+dup drop swap roll
+cat cats 
 pja 3-15-2017 orig
 
 test as
@@ -47,6 +49,17 @@ def cat(p):
     p['sy']['push'](opc) 
     p['sy']['push'](p['OK'])
 #end cat
+def cats(p):
+    if (p['v']['trace'] == 'on'):
+        print('cat begin')
+    #end if
+    op1 = p['sy']['pop']()
+    op2 = p['sy']['pop']()
+    opc = op2 + " " + op1
+    p['sy']['push'](opc) 
+    p['sy']['push'](p['OK'])
+#end cats
+
 def swap(p):
     if (p['v']['trace'] == 'on'):
         print('swap begin')
