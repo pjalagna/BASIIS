@@ -3647,8 +3647,11 @@ def main(startpoint,trace='off'):
     # 
     p['sy']['tagset2'] = tagset2
     #
-
-    p['sy']['start'] = p['sy'][startpoint] 
+    # test pja 7-21-2017 was p['sy']['start'] = p['sy'][startpoint] 
+    p['sy']['start'] = startpoint
+    # did NOT return p
+    return(p)
+    # end test 7-21-2017
 #end main
 def start(trace='off'):
     global p

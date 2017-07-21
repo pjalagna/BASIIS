@@ -6,16 +6,16 @@ keys:
 special verbs:
 tail. - re-executes the paragraph. 
 pushback - backups the stream to allow repicking of this token
-code: - special marker to envelope stream till endcode:
+code: - special marker to envelope stream (IE bypass parsing) till endcode:
 
 operation:
 paragraphs are executed as called
-clauses are executed in sequence till success. 
+clauses are executed in sequence: 
 -- on failure the following clause is executed. 
--- if all clauses fail a called paragraph also fails
+-- if all clauses fail the paragraph also fails
 verbs are executed in sequence. 
 -- if a verb fails the clause fails.
--- if the verb is a paragraph name then that paragraph is called.
+-- if the verb is a paragraph name then that paragraph is called (IE executed in place).
 
 input format:
 start :-
