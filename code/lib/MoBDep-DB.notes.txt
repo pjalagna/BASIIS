@@ -1,0 +1,44 @@
+/*
+file MoBDep-DB.notes.txt
+11-12-2018 pja orig
+*/
+R screens -#< Lines ;
+R Lines -#< Elements ;
+R Elements -< ElementAttribute ;
+R ElementAttribute >0-attributes ;
+R lines -0< lineAttribute ;
+R lineAttribute >0-attributes ;
+R screens -0< screenAttribute ;
+R screenAttribute >0-attributes ;
+R Elements -< type-of-element ;
+R type-of-element >0- elementTypes ;
+R type-of-element -0< TypeAttribute ;
+R TypeAttribute >0-attributes ;
+
+T screens((SName)SID*1)
+code:
+def put_screens(SName):
+t = "screens"
+r = unique(%SName%)
+c = 'SName' , v = %SName% ; writeTCVR
+c = 'SID' , v = genX() ; writeTCVR
+end code:
+
+T Lines((SName=screens.SName,Line*1)LID*1)
+T Elements((LID=Lines.LID,pos*1)ElType,ElName,ElLabel,EID*1)
+T Attributes((AID)AtName,AtValue)
+T lineAttribute((LID=Lines.LID,AID=Attributes.AID))
+T ElementAttribute((EID,AID))
+T screenAttribute((SID,AID))
+T elementTypes((ETypeName))
+T type-of-element((EID,TypeName)TOEID*1)
+T TypeAttribute((TOEID,AID))
+/* notes
+*1 unique index
+-#< ordered
+-- 11
+--< 1M
+--0< 0M
+--#< ordred 1M
+*/
+endend

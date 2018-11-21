@@ -1,0 +1,6 @@
+t2018.py
+tr :-
+[[ 1 ]] "hello" msg ... .
+[[ 2 ]] "again" msg .
+;
+@endend

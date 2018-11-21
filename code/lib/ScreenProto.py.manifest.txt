@@ -1,0 +1,16 @@
+addJSLibAct
+ARecAct
+CVAct
+EAct
+finalAct
+fnAct
+JSFileAct
+lineFinalAct
+LitAct
+/* Lit((LITID*1)LitValue*1) */
+/* Line((ScreenName,line#,pos)type=LIT,LITID) */ 
+screenAct
+sendAct
+/* sendAct: sendList((ScreenName,sendListName,sendName)) */
+sendListAct
+textNotNameEnd

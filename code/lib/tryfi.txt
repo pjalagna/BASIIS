@@ -1,2 +1,3 @@
+of /* c /not */and /notAgain on
 tester of quotes "this is quoted" this is not .
 

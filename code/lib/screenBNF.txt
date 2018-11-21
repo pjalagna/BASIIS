@@ -1,0 +1,81 @@
+/* 
+file screenBNF.txt
+2018-11-18 pja review and rewrite
+*/
+ScreenProto.py
+Smain :-
+[[ 1 ]] ==screen <<SName>> ==(( screenStuffs ==)) screenAct tail. .
+[[ 2 ]] ==;; finalAct .
+;
+screenStuffs :- 
+[[ 1 ]] screenStuff screenStuff2 .
+;
+screenStuff :-
+[[ 1 ]] ==line <<LNumber>> ==( lineStuffs ==) lineFinalAct .
+[[ 2 ]] ==script scriptStuff .
+[[ 3 ]] ==attribute <<AttributeElementname>> ==( AStuffs ==) ARecAct . 
+[[ 4 ]] ==sendList <<sendListName>> ==( sendStuffs ==) sendListAct .
+;
+
+screenStuff2 :-
+[[ 1 ]] ==, screenStuff tail. .
+[[ 2 ]] .
+;
+/* line stuff */
+lineStuffs :-
+[[ 1 ]] lineStuff lineStuff2 .
+;
+
+lineStuff :-
+[[ 1 ]] ==fn <<fnName>> fnAct .
+[[ 2 ]] ==( <<EType>> ==: <<EName>>  ==) EAct .
+[[ 3 ]] <<literal>> LitAct .
+/* LitAct: 
+*/
+;
+
+lineStuff2 :-
+[[ 1 ]] ==, lineStuff tail. .
+[[ 2 ]] .
+;
+
+/* attribute stuff */
+AStuffs :-
+[[ 1 ]] AStuff AStuff2 .
+;
+
+AStuff :-
+[[ 1 ]] <<AttName>> === <<ATTValue>> CVAct  .
+/* CVAct:
+attribute((AttributeElementname,AttName)ATTValue)
+*/
+;
+AStuff2 :-
+[[ 1 ]] ==, AStuff tail. .
+[[ 2 ]] .
+;
+/* script stuff */
+
+scriptStuff :-
+[[ 1 ]] ==begin <<name>> textNotNameEnd <<name>> ==end addJSLibAct tail. .
+[[ 2 ]] ==include <<JSFilename>> JSFileAct tail. .
+[[ 3 ]] ==, tail. .
+[[ 4 ]] ==use <<JSLibName>> tail. .
+;
+/* send list stuff */
+sendStuffs :-
+[[ 1 ]] sendStuff sendStuff2 .
+;
+sendStuff :-
+[[ 1 ]] <<sendName>> sendAct .
+/* sendAct: sendList((sendListName,sendName)) */ 
+;
+sendStuff2 :-
+[[ 1 ]] ==, sendStuff tail. .
+[[ 2 ]] .
+;
+
+@ENDEND
+
+
+

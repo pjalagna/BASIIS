@@ -1,17 +1,41 @@
 # file fioiClass.py
-# fioi , fioo , get/set iox, flookup , fwhite, ftill,  fctill, ftillor
-# == tested
-# fpword, fpback
+# pja 11-09-2018 a) added data prev-iox, curtype w/gets
+# --- b) added fpwd() response to -> (token) ; sets self.prev-iox, self.cur-type
+# --- c) changed fwhite to skip /* -- */ comments
+# --- d) added fpbk() resets self.prev-iox, self.cur-type
+# --- d1) added data prev-type -- internal usage
 # pja 3-04-2017 tested fpword
 # pja 9-24-12 edits to stop till, tillor, ctill on eof
 # ------------ edits to clip targetCH to targetCH[0]
 # pja 10-17-2012 changed print to #rint
 # pja 1-4-13 added getAlpha getNums getAnum
 # pja 2-27-13 added type to fpword to transmit "Q" for quoted string "S" for simple string
+# notes:
+# LALR(n) considerations:
+# --- local fpwd,fpback only hold 1 last prev-iox. 
+# --- these locals would need to be stacks
+# fioi , fioo , get/set iox, flookup , fwhite, ftill,  fctill, ftillor
+# fpword, fpback
+# fpwd, fpbk
+""" test as
+import fioiClass
+j = fioiClass.fio('tryfi.txt')
+j.fpwd()
+j.fpwd()
+j.fpbk()
+"""
 class fio():
     def __init__(self,fNa):
         self.fh = open(fNa,'r')
+        self.prev_iox = 0
+        self.cur_type = '' # unknown at start
     # end init
+    def getPrev_iox(self):
+        return(self.prev_iox)
+    #end getPrev_iox
+    def getCur_type(self):
+        return(self.cur_type)
+    # end getCur_type
     def fioi(self):
         p0 = self.fioxGet()
         ans = self.fh.read(1)
@@ -62,6 +86,7 @@ class fio():
         return(c) # 0 = ok , -1 = nok
     # end flookup
     def fwhite(self):
+        #rint('white called')
         c = 0
         while (c==0):
             m = self.fioi()
@@ -72,12 +97,47 @@ class fio():
                 c = 0 # stay in loop
             elif (m == '\n'):
                 c = 0 # stay in loop
+            elif (m == '/'):
+                self.fwhiteLoop2()
+                c = 1 # break
             else:
                 c = -1
             # endif
         #wend
         self.fioo() # back up one
     # end fwhite
+    
+    def fwhiteLoop2(self):
+		""" test for /* """
+		#rint('loop2')
+		p2 = self.fioi()
+		#rint('loop2 ioi (' + p2 + ')')
+		if (p2 != '*'):
+			self.fioo() # back 1 to /
+			#exit
+		else:
+			#begin loop2
+			c2 = 0
+			while (c2==0):
+				#rint('loop2 - loop')
+				p3 = self.fioi()
+				#rint('p3 (' + p3 + ")")
+				if (p3 != '*'):
+					c2 = 0 # continue
+				else:
+					p4 = self.fioi()
+					#rint('p4 (' + p4 + ")")
+					if (p4 != '/'):
+						c2 = 0 # continue
+					else:
+						self.fioi() # ahead beyond /
+						c2 = -1 # break
+					#endif p4
+				#endif p3
+			#wend c2
+		#endif p2     
+    #end fwhiteLoop2
+    
     def ftill(self,targetCH):
         """ skip till target """
         c = 1
@@ -173,14 +233,36 @@ class fio():
         ioxNew = self.fioxGet()
         return([ioxOld,wd,ioxNew,ty])
     #end fpword
+    def fpwd(self):
+        """ adaptor for fpword -> [ioxOld,wd,ioxNew,ty]
+            sets internal prev-iox, cur-type
+        """
+        struct = self.fpword()
+        # [ioxOld,wd,ioxNew,ty] # iox already set from fpword
+        # set prev-iox
+        self.prev_iox = struct[0]
+        # set cur-type
+        self.cur_type = struct[3]
+        # ret token
+        return(struct[1])
+    #end fpwd
     def fpback(self,struct):
-        """ g: [ioxOld,na,na]
+        """ g: [ioxOld,n/a,n/a]
             resets iox to old
         """
         self.fioxSet(struct[0])
         # adjust struct for return
         return([0, ' ',struct[0]])
     #end def
+    def fpbk(self):
+        """ converter for fpback -> [ioxOld,wd,ioxNew,ty]
+        """
+        struct = [0,' ',0,' ']
+        struct[0] = self.prev_iox
+        self.fpback(struct)
+        # set type to unknown
+        self.cur_type = ''
+    #end fpbk
     def fgetAlpha(self):
         """ a-zA-Z """
         ioxOld = self.fioxGet()

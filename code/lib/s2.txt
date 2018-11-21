@@ -1,0 +1,60 @@
+/* 
+file s2.txt
+pja 11-20-2018 orig
+
+screen BNF
+*/
+
+s2a.py
+SMain :- 
+[[ 1 ]] "Script file" ask "SCFile" ! dumpNDS init_s2a Smain2 .
+;
+
+Smain2 :-
+[[ 1 ]] ==screen <<SName>> ==(( lineStuffs ==)) dumpNDS . 
+[[ 2 ]] ==;; .
+;
+
+lineStuffs :-
+[[ 1 ]] lineStuff tail. .
+[[ 2 ]] .
+;
+
+lineStuff :-
+[[ 1 ]] ==line <<LineNum>> ==( lineNumStuffs ==) dumpNDS .
+[[ 2 ]] ==attributes dumpNDS . 
+[[ 3 ]] ==sendList dumpNDS . 
+;
+
+lineNumStuffs :-
+[[ 1 ]] pos0 lineNumStuff lineNumStuff2
+;
+
+pos0 :-
+[[ 1 ]] "0" "pos" ! .
+;
+
+lineNumStuff :-
+[[ 0 ]] pos1 ... 
+[[ 1 ]] ==E <<Ename>> EAct .
+[[ 2 ]] <<LitValue>> LAct . 
+;
+
+lineNumStuff2 :-
+[[ 1 ]] ==, lineNumStuff tail. .
+[[ 2 ]] .
+;
+EAct :-
+[[ 1 ]] dumpNDS .
+;
+
+LAct :-
+[[ 1 ]] dumpNDS .
+;
+
+pos1 :-
+/* add 1 to pos */ 
+[[ 1 ]] "pos" @ "1" + "pos" ! .
+; 
+
+@ENDEND
