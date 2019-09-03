@@ -1,0 +1,117 @@
+ddlgen.py
+include strP /* string routines */
+include fioiP /* file parsing routines */
+include filesP /* file management routines */
+here1 :-
+[[ 1 ]] 
+"NOTE infile set from fioiP " drop
+"./out/" "dirLoc" !
+"dirLoc" @ "infile" @ cat ".out.txt" cat "outfloc" ! 
+"outfloc" @ dots /* tell operator location */
+"outfloc" @ fclear /* renew file */
+" " "flList" ! 
+" " "s1o" !
+" " "pkList" !
+" " "ftsw1" !
+" " "ftsw2" !
+/* uses sqlite3 syntax */
+"\n CREATE TABLE IF NOT EXISTS %sna  ( " "s1" ! 
+" %cn , " "s2" !
+"\n   %cn REFERENCES %fkn ( %fkc ) , " "s2a" !
+" primary key (" "s3a" ! 
+" ) \n ); " "s4" !
+ddlstart
+ddlend .
+;
+ddlstart :-
+[[ 1 ]] ==S <<sna>> SAct
+        ==(( keys ds2 tail. .
+;
+ds2 :-
+[[ 1 ]] ==)) FAct .
+[[ 2 ]] ==) tags ==) FAct .
+;
+keys :-
+[[ 1 ]] keyin key2 .
+;
+keyin :-
+[[ 1 ]] <<kn>> keyin2 .
+;
+keyin2 :-
+[[ 1 ]] ==@@ <<fkTable>> <<fkCol>> FKKAct .
+[[ 2 ]] KAct .
+;
+key2 :-
+[[ 1 ]] ==, keyin tail. .
+[[ 2 ]] .
+;
+tags :-
+[[ 1 ]] tagin tag2 .
+;
+tagin :-
+[[ 1 ]] <<tn>> tagin2 .
+;
+tagin2 :-
+[[ 1 ]] ==@@ 
+        <<fkTable>> <<fkCol>> FKTAct .
+[[ 2 ]] TAct .
+;
+tag2 :-
+[[ 1 ]] ==, tagin tail. .
+[[ 2 ]] .
+;
+SAct :-
+[[ 1 ]] "s1o" @ "<<sna>>" @ "%sna" "s1" @  strReplace  
+         cats "s1o" ! .
+;
+KAct :-
+[[ 1 ]] "pkList" @ "<<kn>>" @ cats " , " cats "pkList" !
+        "s1o" @ crlf cats 
+        "<<kn>>" @ "%cn" "s2" @  strReplace  
+         cats "s1o" ! .
+;
+TAct :-
+[[ 1 ]] "s1o" @ crlf cats 
+        "<<tn>>" @ "%cn" "s2" @  strReplace  
+         cats "s1o" ! .
+;
+
+FAct :-
+[[ 1 ]] "s1o" @ crlf cats "s3a" @ cats
+        "pkList" @ strRemove strRemove cats
+        "s4" @ cats "outfloc" @ fout
+        " " "s1o" !
+        " " "pkList" !
+        .
+; 
+/* cre ( cn , pri( pklist-2 ); out cleanup */
+FKKAct :-
+/* create index for <<kn>> into fkList */
+[[ 1 ]] 
+"s1o" @  
+"<<kn>>" @ "%cn" "s2a" @  strReplace "save" !
+"<<fkTable>>" @ "%fkn" "save" @  strReplace "save" !
+"<<fkCol>>" @ "%fkc" "save" @  strReplace 
+cats "s1o" ! .
+;
+
+FKTAct :-
+/* create index for <<tn>> into fkList */
+[[ 1 ]] 
+"s1o" @  
+"<<tn>>" @ "%cn" "s2a" @  strReplace "save" !
+"<<fkTable>>" @ "%fkn" "save" @  strReplace "save" !
+"<<fkCol>>" @ "%fkc" "save" @  strReplace 
+cats "s1o" ! .
+;
+@ENDEND
+/* works for S statement 11-25-2018 */
+
+/* design notes:
+-- W tname  ( [ c=v ] ) {@ ( [c=v] )}
+-- column name preceded by (ie + cn)
+a) "+" add auto
+b) "from" take in <<fkTna>> <<fkCna>> for fk index ** to test
+-- ddlend adds indexes after all creates , writes
+*/
+

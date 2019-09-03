@@ -1,0 +1,13 @@
+!
+@
+dumpDAT
+...
+tail.
+masterLoop:P
+dots
+msg
+verb
+masterLoop
+ask
+=
+dot

@@ -45,7 +45,7 @@ set symbolTable via [ object = EP<name>.setSymbols(object)]
 jadP :-
 /* jadP [ tableStuff OR LoadStuff ] till @end2 */
 [[ 0 ]] pword ... .
-[[ 00 ]] dup "/*" = drop doComment Tail. .
+[[ 0.10 ]] dup "/*" = drop doComment Tail. .
 [[ 1 ]] dup "TABLE" = drop tableStuff tail. .
 [[ 2 ]] dup "LOAD" = drop loadStuff tail. .
 [[ 3 ]] dup "SCREEN" = drop screenStuff tail. .

@@ -1,0 +1,58 @@
+<ct>
+ CREATE TABLE IF NOT EXISTS screen  (  
+  sna ,  
+  primary key (   sna    ) 
+ ); 
+ </ct>
+ <ct>  
+ CREATE TABLE IF NOT EXISTS line  (  
+  lnumb ,  
+  primary key (   lnumb    ) 
+ ); 
+ </ct>  
+ CREATE TABLE IF NOT EXISTS element  (  
+  ena ,  
+  etype ,  
+  primary key (   ena    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS att  (  
+  aid ,  
+  c ,  
+  v ,  
+  primary key (   aid    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS element  (  
+  ena ,  
+  etype ,  
+  primary key (   ena    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS linepos  (  
+   lnumb REFERENCES line ( lnumb ) ,  
+  pos ,  
+  litCD ,  
+  ena ,  
+  litVal ,  
+   sna REFERENCES screen ( sna ) ,  
+  primary key (   pos    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS lib  (  
+  pna ,  
+  code ,  
+   sna REFERENCES screen ( sna ) ,  
+  primary key (   pna    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS sa  (  
+  sna ,  
+  aid ,  
+  primary key (   sna  ,  aid    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS se  (  
+  sna ,  
+  ena ,  
+  primary key (   sna  ,  ena    ) 
+ );   
+ CREATE TABLE IF NOT EXISTS ea  (  
+  ena ,  
+  aid ,  
+  primary key (   ena  ,  aid    ) 
+ ); 

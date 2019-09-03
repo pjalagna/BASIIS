@@ -1,0 +1,11 @@
+!
+@
+...
+tail.
+masterLoop:P
+dots
+dup
+ask
+=
+masterLoop
+msg

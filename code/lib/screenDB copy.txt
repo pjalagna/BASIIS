@@ -1,0 +1,19 @@
+S screen (( sna )) 
+S line (( lnumb ))
+S element (( ena ) etype )
+S linepos (( lnumb from line lnumb , pos ) 
+             litCD , ena , litVal , 
+             sna from screen sna ) 
+S att (( aid ) c , v )
+S element (( ena ) etype )
+S lib (( pna ) code , sna from screen sna  )
+S sa (( sna  , aid  ))
+S se (( sna  , ena  ))
+S ea (( ena  , aid  ))
+
+@endend 
+/*
+file screenDB.txt
+pja 11-26-2018 added from t c for fk pickup
+pja 11-24-2018 moved comments to bottom
+*/

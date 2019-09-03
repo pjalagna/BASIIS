@@ -1,5 +1,11 @@
-#file basiiHelper.py
+
+# file basiiHelper.py
 """history
+pja 11-24-2018 - added comments
+-- added p['c'] for classes
+-- redid hclEQ ==x should call stteam fio for token
+pja 11-23-2018 - design code-begin to @@ at paragraph
+pja 11-21-2018 - added ==include vectorFileName at paragraph
 pja 11-20-2018 pja added aborts for pn blank
 pja 11/15/2018 added code in chk for '...'
 pja 11/14/2018 edited VWord to repeat on blank
@@ -31,12 +37,14 @@ file format is token per space
 output filename
 pgf :-
 [[ clause ]] *verb till . .
-; or @endend
+; OR
+code-begin till @@ OR 
+include vector-filename OR
+@endend
 ===================================
 test as
-filename = 't11.txt'
 import basiiHelper
-basiiHelper.main(filename)
+basiiHelper.main()
 struct = basiiHelper.getSec()
 # generates manifest.txt and output files
 """
@@ -44,23 +52,24 @@ def help():
     out = """
 see basii helper ops guide for usage protocols
 # usage
-basiiHelper.main(filename)
+import basiiHelper
+basiiHelper.main() /* asks for filename */
 
           """
     print(out)
 #end help
 
-def main(filename):
+def main():
     global sec
+    #ask for input filename
+    filename = raw_input('>? inputfile name? ')
     sec = {}
     sec['manifest'] = {} # manifest of verbs
+    sec['code'] = '\n#code additions \n' # holder of code fragments
     sec['sy'] = {} # symbol table
     sec['M'] = {} # external routine table
     sec['streamRtns'] = '' # code list
     sec['input'] = filename
-    """ old code
-    fh = open(filename,'r')
-    """
     import fioiClass
     sec['sy']['fio'] = fioiClass.fio(filename)
     sec['outfile'] = VWord()
@@ -75,6 +84,7 @@ def main(filename):
     sec['mx3'] = ''
     paragraph(ffo)
     ffo.write(sec['hx2'] + sec['mx3'] + sec['hx4'])
+    ffo.write(sec['code'] + '\n')
     ffo.write(sec['hx1'])
     ffo.close()
     # fh.close()
@@ -100,6 +110,32 @@ def paragraph(ffo):
         sec['pgn'] = pgn #27
         if (pgn.upper() == '@ENDEND'):
             pp = -1 #break
+        elif (pgn.upper() == 'INCLUDE'): 
+            incf = VWord()
+            print('incf =(' + incf + ")")
+            sec['mx3'] = sec['mx3'] + sec['hx3Inc'].replace('%fnInc%',incf)
+            # manifest
+            sec['manifest'][incf + ':I'] = 'include'
+        elif (pgn.upper() == 'CODE-BEGIN'): 
+            # gather into code array
+            # use ioi till @@
+            cv = ''
+            cx1 = 0
+            while (cx1 ==0):
+                 tm = sec['sy']['fio'].fctill('@')
+                 print('tm=(' + tm + ")")
+                 cv = cv + tm
+                 xm = sec['sy']['fio'].fioi() # absorb the @
+                 xn = sec['sy']['fio'].fioi()
+                 #is the next ioi a @ 
+                 if (xn == '@'): ## y- end collection
+                      sec['code'] = sec['code'] + cv ##    add to sy code array
+                      cx1 = 1 ## break
+                      ### else
+                 else:
+                      nop = -1 ## loop
+                 #endif
+            #wend
         else:
             pgnCd = VWord() # :-
             # add your name to the symbol table
@@ -175,6 +211,8 @@ def verbs():
         if (vn == "."):
             nop = "<removed code see notes =a=>"
             vv = -1 #break
+        elif( vn == ''):
+            raw_input('error vn is blank -ctl-c to abort')
         else:
             # test for quoted string
             if (sec['sy']['fio'].cur_type == "Q"):
@@ -225,6 +263,8 @@ def verbs():
                 else:
                     #add
                     vnal = sec['M'][vn] = vn # remember
+                    # add call to cl2 via hcl2vn0
+                    sec['cl2'] = sec['cl2'] + sec['hcl2vn0'].replace('%vn%',vn)
                     # add your name to the symbol table
                     ax =sec['hx3M'].replace('%vn%',vn)
                     ax =ax.replace('%vna%',vna)
@@ -356,25 +396,31 @@ def take(p,VectorFile):
 def main(startpoint,trace='off'):
     global p
     p = {}
+    p['c'] = {} # classes
     p['v'] = {} # nds
-    p['v']['trace'] = trace
-    if ( p['v']['trace'] != 'off'):
-        print('begin main')
-    #endif
     p['dat'] = [] # data stack
     p['r'] = [] # r stack
     p['l'] = {} # lib table
     p['sy'] = {} # symbol table
     p['sy']['pop'] = datPop
     p['sy']['push'] = datPush
-    prepSy()
     p['OK'] = 'pOK'
     p['NOK'] = 'pNOK'
+    prepSy()
+    p['v']['trace'] = trace
+    if ( p['v']['trace'] != 'off'):
+        print('end main')
+    #endif
 """
     sec['hx3'] = """
     # paragraph %pn%
     p['sy']['%pn%'] = %pn%
     #
+"""
+    sec['hx3Inc'] = """
+    # externl service vector file
+    import %fnInc%
+    p = %fnInc%.main(p)
 """
     sec['hx3EQ'] = """
     # paragraph %vn%
@@ -477,16 +523,29 @@ def %pgn%_%cln%():
     sec['hclEQ'] = """
 def %vna%(p):
     logg ('%vn%')
+    p['sy']['pword'](p)
+    p['sy']['pop']() #ok
+    j = p['sy']['pop']()
+    j = j.__str__()
     needle = '%rv%'
-    needle = needle.upper()
-    return(eqeq(needle))
+    if (j.upper() == needle):
+        p['sy']['push'](p['OK'])
+    else:
+        p['sy']['push'](p['NOK'])
+        p['sy']['pback'](p)
+        p['sy']['pop']() # absorb pback ok
+    #endif
 #end %vna%
 """
     sec['hclM'] = """
 def M%rv%(p):
     logg ('<<%vn%>>')
-    j = p['sy']['fio'].fpwd()
+    p['sy']['pword'](p)
+    p['sy']['pop']() #ok
+    j = p['sy']['pop']()
+    j = j.__str__()
     p['v']['%vn%'] = j
+    p['sy']['push'](p['OK']) # status
 #endif M%rv%
 """
 #end prepSec
@@ -504,4 +563,4 @@ def VWord():
 #end VWord 
     
         
-    
+    #

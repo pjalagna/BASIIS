@@ -1,10 +1,17 @@
 # file fioiP.py
 """ set vectors for fioiClass 
+pja 11-24-2018 changed def name to main
+--- for compatibility with basiiHelper, pgf
+- fixed problem of timing. when includes are called there is nothing on the stack.
 pja 3-15-2017 orig
 
 """
-def init(p):
+def main(p):
+    p['sy']['push']('input fileName? ')
+    p['sy']['ask'](p)
+    p['sy']['pop']() # ok
     inFile = p['sy']['pop']()
+    p['v']['infile'] = inFile # save NDS
     p['c']['fioiClass'] = __import__('fioiClass')
     p['c']['fioi'] = p['c']['fioiClass'].fio(inFile)
     p['sy']['fioi'] = Pfioi
@@ -33,18 +40,16 @@ def Pfpword(p):
     if (p['v']['trace'] == 'on'):
         print('begin Pfpword')
     #endif
-    ans = p['c']['fioi'].fpword()
-    p['v']['Cword'] = ans # full structure
-    p['sy']['push'](ans[1].__str__()) # just word
+    ans = p['c']['fioi'].fpwd()
+    
+    p['sy']['push'](ans) # just word
     p['sy']['push'](p['OK'])
 #end Pfpword
 def Pfpback(p):
     if (p['v']['trace'] == 'on'):
         print('begin Pfpback')
     #endif
-    struct1 = p['v']['Cword'][0] # ioxold, word, ioxNew,type
-    ans = p['c']['fioi'].fpback([struct1 , struct1, struct1 ])
-    p['v']['Cword'] = ans # 0, '', ioxOld
+    p['c']['fioi'].fpbk()
     p['sy']['push'](p['OK'])
 #end Pfpback
 

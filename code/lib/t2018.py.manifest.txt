@@ -1,4 +1,5 @@
-P:tr
 msg
-tr
 ...
+trop:I
+tr:P
+tr

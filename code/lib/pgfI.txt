@@ -1,0 +1,15 @@
+pgfi.py
+masterLoop :-
+[[ 1 ]] ">>? " ask "command" ! ... .
+[[ 2 ]] "command" @ "done" =  "exiting" msg .
+[[ 3 ]] "command" @ "push" =  ask tail. .
+[[ 4 ]] "command" @ "dump" = "not sure" msg  .
+[[ 5 ]] "command" @ "trace" =  ask  "trace" ! tail. .
+[[ 6 ]] "command" @ "dots" = dots tail. .
+[[ 7 ]] "command" @ "v" = verb tail. .
+[[ 8 ]] "command" @ "dot" = dot tail. .
+[[ 9 ]] "command" @ "dumpDAT" = dumpDAT tail. .
+;
+
+ @ENDEND 
+

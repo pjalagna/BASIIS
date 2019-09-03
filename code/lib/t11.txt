@@ -1,6 +1,22 @@
 t2018.py
+/* test code */
+include trop
 tr :-
+/* test comment here */
 [[ 1 ]] "hello" msg ... .
 [[ 2 ]] "again" msg .
 ;
+
+code-begin
+def one(para1 , para2):
+     ans = para1 + '\n' + para2
+     return(ans)
+#end one
+@@
+code-begin
+def six(para1 , para2):
+     ans = para1 + '\n' + para2
+     return(ans)
+#end six
+@@
 @endend

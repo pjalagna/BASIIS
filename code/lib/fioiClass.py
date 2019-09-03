@@ -1,4 +1,5 @@
 # file fioiClass.py
+# pja 11-24-2018 added recall of white after comment
 # pja 11-09-2018 a) added data prev-iox, curtype w/gets
 # --- b) added fpwd() response to -> (token) ; sets self.prev-iox, self.cur-type
 # --- c) changed fwhite to skip /* -- */ comments
@@ -135,6 +136,7 @@ class fio():
 					#endif p4
 				#endif p3
 			#wend c2
+			self.fwhite() # call again after comments
 		#endif p2     
     #end fwhiteLoop2
     

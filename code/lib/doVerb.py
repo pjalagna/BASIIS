@@ -1,6 +1,9 @@
 #file doVerb.py
-# 2018-11-15 added code for elipsis
-# 11-09-2018 changed endcode to incl; added code
+"""
+pja 11-25-2018 added tail., swap , drop
+paj 2018-11-15 added code for elipsis
+pja 11-09-2018 changed endcode to incl; added code
+"""
 def init(p):
     # load symbol table with all known verbs
     p['sy']['msg'] = msg
@@ -12,8 +15,58 @@ def init(p):
     p['sy']['...'] = elipsis
     p['sy']['dumpNDS'] = dumpNDS
     p['sy']['ask'] = ask
+    p['sy']['tail.'] = tail
+    p['sy']['swap'] = swap
+    p['sy']['drop'] = drop
+    p['sy']['dup'] = dup
+    p['sy']['dots'] = dots
+    p['sy']['dot'] = dot
+    p['sy']['verb'] = verb
+    p['sy']['dumpDAT'] = dumpDAT
     return(p)
 #end init
+def dumpDAT(p):
+    print(p['dat'].__str__())
+    p['sy']['push'](p['OK']) # status
+#end dumpDAT
+
+def verb(p):
+    vn = p['sy']['pop']()
+    print('vn=(' + vn + ")")
+    p['sy'][vn](p) # as dangerous as eval
+    p['sy']['push'](p['OK']) # status
+#end verb
+def dots(p):
+    print("dot=(" + p['sy']['pop']() + ")")
+    p['sy']['push'](p['OK']) # status
+#end dots
+def dot(p):
+    print("dot=(" + p['sy']['pop']() + ")")
+    print("dot2=(" + p['sy']['pop']() + ")")
+    # no status
+#end dots
+
+def dup(p):
+   a = p['sy']['pop']()
+   p['sy']['push'](a)
+   p['sy']['push'](a)
+   p['sy']['push'](p['OK']) # status
+#end dup
+def drop(p):
+    p['sy']['pop']()
+    p['sy']['push'](p['OK'])
+#end drop
+def swap(p):
+    a = p['sy']['pop']()
+    b = p['sy']['pop']()
+    p['sy']['push'](a)
+    p['sy']['push'](b)
+    p['sy']['push'](p['OK']) # status
+#end swap
+def tail(p):
+    p['sy']['push']('tail.') # will be caught by pgf
+#end tail
+
 def ask(p):
     """ get from operator input """
     p['sy']['msg'](p) # print question
@@ -91,7 +144,7 @@ def eq(p):
     if (op1 == op2):
        p['sy']['push'](p['OK'])
     else:
-        p['sy']['push'](p['NOK'])
+       p['sy']['push'](p['NOK'])
     #endif
 #end eq
     

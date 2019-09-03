@@ -144,6 +144,10 @@ def main(startpoint,trace='off'):
     p['OK'] = 'pOK'
     p['NOK'] = 'pNOK'
 
+    # externl service vector file
+    import trop
+    p = trop.main(p)
+
     # paragraph tr
     p['sy']['tr'] = tr
     #
@@ -154,6 +158,17 @@ def start(trace='off'):
     p['v']['trace'] = trace # save trace setting
     p['sy']['start'](trace) # process begins at start
 #end start
+
+def one(para1 , para2):
+     ans = para1 + '\n' + para2
+     return(ans)
+#end one
+
+def six(para1 , para2):
+     ans = para1 + '\n' + para2
+     return(ans)
+#end six
+
 
 # helper rtns 
 def eqeq(needle):

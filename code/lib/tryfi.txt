@@ -1,3 +1,15 @@
 of /* c /not */and /notAgain on
 tester of quotes "this is quoted" this is not .
+code-begin
+def firt( para1, para2 ):
+    print ('all but @ then @')
+    see me too
+#end firt
+@@
+def lert( para1, para2 ):
+    print ('all but @ then @')
+    see me too
+#end firt
+@@
+@ENDEND
 
